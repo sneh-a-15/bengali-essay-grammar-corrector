@@ -1,18 +1,16 @@
-import sys
-sys.stdout.reconfigure(encoding='utf-8')
+from preprocessing.tokenizer_stemmer import clean_tokens
+from rules.correction_dict import correction_dict
 
-import pandas as pd
-from preprocessing.tokenizer_stemmer import tokenize_and_stem, clean_tokens
+def correct_sentence(tokens):
+    return [correction_dict.get(tok, tok) for tok in tokens]
 
-print("বাংলা ভাষা খুবই সুন্দর।")
-# Load dataset
-df = pd.read_csv('data/bengali_grammar_autocorrect_dataset.csv')
+def reconstruct_sentence(tokens):
+    return " ".join(tokens)
 
-# Apply preprocessing
-df['incorrect_cleaned'] = df['incorrect'].apply(clean_tokens)
-df['correct_cleaned'] = df['correct'].apply(clean_tokens)
+user_input = input("Enter a Bengali sentence: ")
+tokens = clean_tokens(user_input)
+corrected_tokens = correct_sentence(tokens)
+corrected_sentence = reconstruct_sentence(corrected_tokens)
 
-# Save processed data
-df.to_csv('data/cleaned_data.csv', index=False)
-
-print(df.head())
+print("Original:", user_input)
+print("Corrected:", corrected_sentence)
